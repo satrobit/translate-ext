@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="ui.css" />
+  <style>
+    body { width: 320px; padding: 14px 16px 12px; }
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .status { margin: 0 0 12px; }
+    .actions { display: flex; gap: 8px; margin-bottom: 12px; }
+    .actions button { flex: 1; }
+    label.field { display: block; margin-bottom: 10px; }
+    label.field span { display: block; margin-bottom: 4px; }
+    .sep { border-top: 1px solid var(--line); margin: 8px 0; }
+    footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; }
+    kbd { font: 11px ui-monospace, monospace; background: var(--field); border-radius: 4px; padding: 1px 5px; }
+    .icon-link { background: none; border: 0; color: var(--accent); cursor: pointer; font: inherit; padding: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><img src="icons/32.png" width="20" height="20" alt="" />Translate</h1>
+    <button class="icon-link" id="settings">Settings</button>
+  </header>
+
+  <div id="unsupported" class="hidden">
+    <p class="muted">This page can't be translated (browser pages and the extension store are off-limits to extensions).</p>
+  </div>
+
+  <div id="main">
+    <p class="status" id="status">Detecting language…</p>
+    <div class="actions">
+      <button class="primary" id="translate">Translate</button>
+      <button class="secondary" id="restore">Show original</button>
+    </div>
+
+    <label class="field">
+      <span class="muted">Translate to</span>
+      <select id="target"></select>
+    </label>
+
+    <div class="sep"></div>
+    <label class="toggle" id="row-alwaysLang"><span id="lbl-alwaysLang">Always translate this language</span><input type="checkbox" data-rule="alwaysLang" /><span class="switch"></span></label>
+    <label class="toggle" id="row-neverLang"><span id="lbl-neverLang">Never translate this language</span><input type="checkbox" data-rule="neverLang" /><span class="switch"></span></label>
+    <label class="toggle"><span>Always translate <b id="host1"></b></span><input type="checkbox" data-rule="alwaysSite" /><span class="switch"></span></label>
+    <label class="toggle"><span>Never translate <b id="host2"></b></span><input type="checkbox" data-rule="neverSite" /><span class="switch"></span></label>
+    <div class="sep"></div>
+    <label class="toggle"><span>Auto-translate all foreign pages</span><input type="checkbox" id="autoAll" /><span class="switch"></span></label>
+  </div>
+
+  <footer class="muted">
+    <span>Toggle: <kbd id="shortcut">Alt+Shift+T</kbd></span>
+    <button class="icon-link" id="bubble">Show bubble</button>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

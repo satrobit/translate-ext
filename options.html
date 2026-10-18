@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Page Translate settings</title>
+  <link rel="stylesheet" href="ui.css" />
+  <style>
+    body { padding: 32px 16px 64px; }
+    main { max-width: 640px; margin: 0 auto; }
+    h1 { font-size: 20px; margin-bottom: 24px; }
+    section { border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+    .field { margin: 10px 0; }
+    .field > span { display: block; margin-bottom: 4px; }
+    .radio { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; cursor: pointer; }
+    .radio input { margin-top: 3px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--field); border-radius: 14px; padding: 3px 4px 3px 10px; }
+    .chip button { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 4px; border-radius: 50%; }
+    .chip button:hover { color: var(--fg); background: var(--hover); }
+    .list { margin-bottom: 14px; }
+    .add { display: flex; gap: 6px; margin-top: 6px; }
+    .add > * { flex: 1; }
+    .add button { flex: none; }
+    .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    #saved { transition: opacity .3s; opacity: 0; color: var(--muted); margin-left: 8px; }
+    #saved.on { opacity: 1; }
+  </style>
+</head>
+<body>
+<main>
+  <h1><img src="icons/48.png" width="28" height="28" alt="" />Page Translate <span id="saved">Saved</span></h1>
+
+  <section>
+    <h2>Language</h2>
+    <label class="field"><span class="muted">Translate pages into</span><select id="targetLang"></select></label>
+    <label class="toggle"><span>Offer to translate pages not in this language</span><input type="checkbox" id="showBanner" /><span class="switch"></span></label>
+    <label class="toggle"><span>Automatically translate all pages not in this language</span><input type="checkbox" id="autoTranslateAll" /><span class="switch"></span></label>
+    <label class="toggle"><span>Show the bubble when a page is translated automatically or with the shortcut</span><input type="checkbox" id="bubbleOnTranslate" /><span class="switch"></span></label>
+  </section>
+
+  <section>
+    <h2>Translation engine</h2>
+    <label class="radio"><input type="radio" name="engine" value="free" />
+      <span><b>Google Translate (free endpoint)</b><br /><span class="muted">Same backend Chrome's translate uses. No key needed; Google may throttle heavy use.</span></span></label>
+    <label class="radio"><input type="radio" name="engine" value="cloud" />
+      <span><b>Google Cloud Translation API</b><br /><span class="muted">Official API with your own key (500k chars/month free, then billed by Google).</span></span></label>
+    <label class="field" id="keyField"><span class="muted">API key</span>
+      <div class="row"><input type="password" id="apiKey" placeholder="AIza…" style="flex:1" autocomplete="off" /><button class="secondary" id="testKey">Test</button></div>
+      <span class="muted" id="testResult"></span>
+    </label>
+  </section>
+
+  <section>
+    <h2>Rules</h2>
+    <div class="list">
+      <div class="muted">Always translate these languages</div>
+      <div class="chips" id="alwaysLangs"></div>
+      <div class="add"><select data-add="alwaysLangs"></select><button class="secondary" data-addbtn="alwaysLangs">Add</button></div>
+    </div>
+    <div class="list">
+      <div class="muted">Never translate these languages</div>
+      <div class="chips" id="neverLangs"></div>
+      <div class="add"><select data-add="neverLangs"></select><button class="secondary" data-addbtn="neverLangs">Add</button></div>
+    </div>
+    <div class="list">
+      <div class="muted">Always translate these sites</div>
+      <div class="chips" id="alwaysSites"></div>
+      <div class="add"><input type="text" data-add="alwaysSites" placeholder="example.com" /><button class="secondary" data-addbtn="alwaysSites">Add</button></div>
+    </div>
+    <div class="list">
+      <div class="muted">Never translate these sites</div>
+      <div class="chips" id="neverSites"></div>
+      <div class="add"><input type="text" data-add="neverSites" placeholder="example.com" /><button class="secondary" data-addbtn="neverSites">Add</button></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Other</h2>
+    <p class="muted" style="margin-top:0">Keyboard shortcut to toggle translation: <b id="shortcut"></b>.
+      Change it at <a href="#" id="shortcuts">chrome://extensions/shortcuts</a>.</p>
+    <p class="muted">Right-click a page or selected text for “Translate” options.</p>
+    <button class="secondary" id="clearCache">Clear translation cache</button>
+  </section>
+</main>
+<script type="module" src="options.js"></script>
+</body>
+</html>
