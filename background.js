@@ -142,16 +142,26 @@ async function translate(texts, tl, sl = 'auto') {
 // Language detection & auto-translate decision
 // ---------------------------------------------------------------------------
 
+// With less text than this, detectors return confident-looking noise (e.g. an
+// image viewer whose only text is the file name), and there's nothing worth
+// translating anyway.
+const MIN_DETECT_LETTERS = 40;
+// Google always names *some* language, with no confidence, so only ask it when
+// there's enough text for the answer to mean something.
+const MIN_REMOTE_DETECT_LETTERS = 200;
+
 async function detect(sample, htmlLang) {
-  if (sample && sample.length > 20) {
-    try {
-      const r = await chrome.i18n.detectLanguage(sample);
-      const top = r.languages && r.languages[0];
-      if (top && (r.isReliable || top.percentage >= 60) && top.language !== 'und') return normLang(top.language);
-    } catch {}
-  }
+  const letters = ((sample || '').match(/\p{L}/gu) || []).length;
+  if (letters < MIN_DETECT_LETTERS) return 'und';
+  try {
+    const r = await chrome.i18n.detectLanguage(sample);
+    const top = r.languages && r.languages[0];
+    // `percentage` is the share of the text in that language, not confidence,
+    // so it can't stand in for `isReliable`.
+    if (r.isReliable && top && top.percentage >= 50 && top.language !== 'und') return normLang(top.language);
+  } catch {}
   if (htmlLang) return normLang(htmlLang);
-  if (sample && sample.trim()) {
+  if (letters >= MIN_REMOTE_DETECT_LETTERS) {
     // Ask Google to detect it.
     try {
       const { langs } = await translate([sample.slice(0, 500)], 'en');

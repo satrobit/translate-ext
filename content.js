@@ -270,8 +270,13 @@
 
   function guessLangFromResults() {
     let best = null;
-    for (const [l, n] of Object.entries(detectedCounts)) if (!best || n > detectedCounts[best]) best = l;
-    if (best) {
+    let total = 0;
+    for (const [l, n] of Object.entries(detectedCounts)) {
+      total += n;
+      if (!best || n > detectedCounts[best]) best = l;
+    }
+    // Only name a language when it clearly dominates a decent amount of text.
+    if (best && detectedCounts[best] >= 100 && detectedCounts[best] / total >= 0.6) {
       ctx.lang = best;
       ctx.langName = ctx.languages[best] || displayName(best);
     }
@@ -764,6 +769,8 @@
   }
 
   async function init(attempt = 0) {
+    // Chrome's built-in image/video/audio viewers have nothing to translate.
+    if (/^(image|video|audio)\//.test(document.contentType)) return;
     const sample = sampleText();
     if (sample.length < 40 && attempt < 3) {
       // SPA still rendering.
